@@ -1,0 +1,10 @@
+name: weibojz
+version: 1
+handle:
+- compress: if ( out_header["Content-type"]~"text/css" ) compress
+- compress: if ( out_header["Content-type"]~"text/html" ) compress
+- compress: if ( out_header["Content-type"]~"text/plain" ) compress
+- compress: if ( out_header["Content-type"]~"application/javascript" ) compress
+- compress: if ( out_header["Content-Length"] >= 50 ) compress
+
+- expire: if( path ~ "resources/" ) time 31536000

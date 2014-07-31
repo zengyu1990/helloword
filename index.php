@@ -1,205 +1,54 @@
 <?php
-
-/*
- *---------------------------------------------------------------
- * APPLICATION ENVIRONMENT
- *---------------------------------------------------------------
- *
- * You can load different configurations depending on your
- * current environment. Setting the environment also influences
- * things like logging and error reporting.
- *
- * This can be set to anything, but default usage is:
- *
- *     development
- *     testing
- *     production
- *
- * NOTE: If you change these, also change the error_reporting() code below
- *
- */
-	define('ENVIRONMENT', 'development');
-/*
- *---------------------------------------------------------------
- * ERROR REPORTING
- *---------------------------------------------------------------
- *
- * Different environments will require different levels of error reporting.
- * By default development will show errors but testing and live will hide them.
- */
-
-if (defined('ENVIRONMENT'))
-{
-	switch (ENVIRONMENT)
-	{
-		case 'development':
-			error_reporting(E_ALL);
-		break;
-	
-		case 'testing':
-		case 'production':
-			error_reporting(0);
-		break;
-
-		default:
-			exit('The application environment is not set correctly.');
-	}
-}
-
-/*
- *---------------------------------------------------------------
- * SYSTEM FOLDER NAME
- *---------------------------------------------------------------
- *
- * This variable must contain the name of your "system" folder.
- * Include the path if the folder is not in the same  directory
- * as this file.
- *
- */
-	$system_path = 'system';
-
-/*
- *---------------------------------------------------------------
- * APPLICATION FOLDER NAME
- *---------------------------------------------------------------
- *
- * If you want this front controller to use a different "application"
- * folder then the default one you can set its name here. The folder
- * can also be renamed or relocated anywhere on your server.  If
- * you do, use a full server path. For more info please see the user guide:
- * http://codeigniter.com/user_guide/general/managing_apps.html
- *
- * NO TRAILING SLASH!
- *
- */
-	$application_folder = 'application';
-
-/*
- * --------------------------------------------------------------------
- * DEFAULT CONTROLLER
- * --------------------------------------------------------------------
- *
- * Normally you will set your default controller in the routes.php file.
- * You can, however, force a custom routing by hard-coding a
- * specific controller class/function here.  For most applications, you
- * WILL NOT set your routing here, but it's an option for those
- * special instances where you might want to override the standard
- * routing in a specific front controller that shares a common CI installation.
- *
- * IMPORTANT:  If you set the routing here, NO OTHER controller will be
- * callable. In essence, this preference limits your application to ONE
- * specific controller.  Leave the function name blank if you need
- * to call functions dynamically via the URI.
- *
- * Un-comment the $routing array below to use this feature
- *
- */
-	// The directory name, relative to the "controllers" folder.  Leave blank
-	// if your controller is not in a sub-folder within the "controllers" folder
-	// $routing['directory'] = '';
-
-	// The controller class file name.  Example:  Mycontroller
-	// $routing['controller'] = '';
-
-	// The controller function you wish to be called.
-	// $routing['function']	= '';
-
-
-/*
- * -------------------------------------------------------------------
- *  CUSTOM CONFIG VALUES
- * -------------------------------------------------------------------
- *
- * The $assign_to_config array below will be passed dynamically to the
- * config class when initialized. This allows you to set custom config
- * items or override any default config values found in the config.php file.
- * This can be handy as it permits you to share one application between
- * multiple front controller files, with each file containing different
- * config values.
- *
- * Un-comment the $assign_to_config array below to use this feature
- *
- */
-	// $assign_to_config['name_of_config_item'] = 'value of config item';
-
-
-
-// --------------------------------------------------------------------
-// END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
-// --------------------------------------------------------------------
-
-/*
- * ---------------------------------------------------------------
- *  Resolve the system path for increased reliability
- * ---------------------------------------------------------------
- */
-
-	// Set the current directory correctly for CLI requests
-	if (defined('STDIN'))
-	{
-		chdir(dirname(__FILE__));
-	}
-
-	if (realpath($system_path) !== FALSE)
-	{
-		$system_path = realpath($system_path).'/';
-	}
-
-	// ensure there's a trailing slash
-	$system_path = rtrim($system_path, '/').'/';
-
-	// Is the system path correct?
-	if ( ! is_dir($system_path))
-	{
-		exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
-	}
-
-/*
- * -------------------------------------------------------------------
- *  Now that we know the path, set the main path constants
- * -------------------------------------------------------------------
- */
-	// The name of THIS file
-	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
-
-	// The PHP file extension
-	// this global constant is deprecated.
-	define('EXT', '.php');
-
-	// Path to the system folder
-	define('BASEPATH', str_replace("\\", "/", $system_path));
-
-	// Path to the front controller (this file)
-	define('FCPATH', str_replace(SELF, '', __FILE__));
-
-	// Name of the "system folder"
-	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
-
-
-	// The path to the "application" folder
-	if (is_dir($application_folder))
-	{
-		define('APPPATH', $application_folder.'/');
-	}
-	else
-	{
-		if ( ! is_dir(BASEPATH.$application_folder.'/'))
-		{
-			exit("Your application folder path does not appear to be set correctly. Please open the following file and correct this: ".SELF);
-		}
-
-		define('APPPATH', BASEPATH.$application_folder.'/');
-	}
-
-/*
- * --------------------------------------------------------------------
- * LOAD THE BOOTSTRAP FILE
- * --------------------------------------------------------------------
- *
- * And away we go...
- *
- */
-require_once BASEPATH.'core/CodeIgniter.php';
-
-/* End of file index.php */
-/* Location: ./index.php */
+	session_start();
+    include_once('config.php');
+	include_once('saetv2.ex.class.php');
+	$o = new SaeTOAuthV2(WB_AKEY, WB_SKEY);
+	$code_url = $o->getAuthorizeURL(WB_CALLBACK_URL);
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<link rel="icon" href="resources/images/icon.png" type="image/x-icon"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<link rel="stylesheet" href="resources/style.css" type="text/css" media="screen"/>
+		<script src="resources/jquery-1.11.0.min.js" type="text/javascript"></script>
+		<script type="text/javascript">get_ip_json(<?php echo WB_AKEY?>);</script>
+		<title>微博价值</title>
+	</head>
+	<body class="page_home">
+		<?php //@include_once('http://www.meiriq.com/sina/pubhtml/header.html'); ?>
+		<div class="main">
+			<div class="body_bg_index">
+				<div class="index_img"></div>
+				<a href="<?=$code_url?>" id="subm" onclick="openwin()" title="点击进入！"><div class="index_buttom"></div></a>
+			</div>
+			<div class="right_body">
+				<div style="height:225px;">
+				<iframe src="http://mrqams.sinaapp.com/call.php?ad_id=<?php echo ISBN_ID; ?>&ad_type_id=16&uid=0" height="220px" width="185px" scrolling="no" style="border:0;" allowtransparency="true"></iframe>
+				</div>
+				<div class="line"></div>
+				<div class="app_nav">
+					<div class="common">
+						<div class="hot">热门应用排行榜</div>
+					</div>
+					<div class="hot_list">
+						<div class="orderOne">1</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-2-91" target="_blank">假如你参加中国好声音</a>
+						<div class="orderOne">2</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-2-93" target="_blank">你是哪位才子才女？</a><div class="updown"></div>
+						<div class="orderOne">3</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-7-7" target="_blank">好友上辈子与你的缘分</a><div class="updown"></div>
+						<div class="orderTwo">4</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-300-11" target="_blank">你的最佳损友是谁？</a><div class="updown" style="background-position:0 -11px;"></div>
+						<div class="orderTwo">5</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-301-7" target="_blank">好友夫妻相</a><div class="updown" style="background-position:0 -11px;"></div>
+						<div class="orderTwo">6</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-2-94" target="_blank">你的人生导师会是谁？</a>
+						<div class="orderTwo">7</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-2-95" target="_blank">月饼口味大战</a>
+						<div class="orderTwo">8</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-5-30" target="_blank">12星座爱情致命缺点</a><div class="updown"></div>
+						<div class="orderTwo">9</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-7-11" target="_blank">适合一起疯的活动</a>
+						<div class="orderTwo">10</div><a href="http://17.xingzuopeiou.sinaapp.com/counter.php?app=1-301-17" target="_blank">钓鱼岛知识测试</a>		
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+			document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F124a412bdc688f7e376be44d993597d4' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+	</body>
+</html>
